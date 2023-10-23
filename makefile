@@ -7,6 +7,7 @@ CC       = gcc#             Program for compiling C programs; default cc
 CXXFLAGS = -Wall\
            -march=native\
 		   -fno-diagnostics-show-caret\
+		   -fdiagnostics-color=always\
            -g#              Flags for the C++ compiler
 LDFLAGS  =#				    Flags for compilers when they invoke the linker
 
@@ -49,12 +50,10 @@ unit_tests: $(TEST_EXEC)
 
 # ------------------------------ Program Linkage ----------------------------- #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
-	@echo "Linking program object files."
 	$(CXX) $(CXXFLAGS) $(SRC_OBJS) $(COM_OBJS) -o $@ $(LDFLAGS)
 
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
-	@echo "Linking test object files."
 	$(CXX) $(CXXFLAGS) $(TESTS_OBJS) $(COM_OBJS) -o $@ $(LDFLAGS)
 
 # ============================================================================ #
@@ -62,21 +61,8 @@ $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
 # ============================================================================ #
 # Compile .cpp files into .obj files and create .d files to trigger
 # recompilation if headers change
-# ----------------------------- Source directory ----------------------------- #
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@echo "Compiling source"
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
-
-# ----------------------------- Common directory ----------------------------- #
-$(BUILD_DIR)/%.o: $(COM_DIR)/%.cpp
-	@echo "Compiling common"
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
-
-# ------------------------------ Tests directory ----------------------------- #
-$(BUILD_DIR)/%.o: $(TESTS_DIR)/%.cpp
-	@echo "Compiling tests"
+# ---------------------------------------------------------------------------- #
+$(BUILD_DIR)/%.o: */%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
@@ -89,16 +75,28 @@ debug:
 	@printf "EXE: %s\n" $(EXEC)
 
 	@printf "CXXFLAGS: "
-	@printf "%s " $(CXXFLAGS)
+	@printf "%s" $(CXXFLAGS)
 
 	@printf "\nLDFLAGS: "
-	@printf "%s " $(LDFLAGS)
+	@printf "%s\n" $(LDFLAGS)
 
-	@printf "\n\nSRC_CPP:\n"
+	@printf "\nSRC_CPP:\n"
 	@printf "%s\n" $(SRC_CPP)
+
+	@printf "\nCOM_CPP:\n"
+	@printf "%s\n" $(COM_CPP)
+
+	@printf "\nTESTS_CPP:\n"
+	@printf "%s\n" $(TESTS_CPP)
 
 	@printf "\nSRC_OBJS:\n"
 	@printf "%s\n" $(SRC_OBJS)
+
+	@printf "\nCOM_OBJS:\n"
+	@printf "%s\n" $(COM_OBJS)
+
+	@printf "\nTESTS_OBJS:\n"
+	@printf "%s\n" $(TESTS_OBJS)
 
 	@printf "\nSRC_DEPS:\n"
 	@printf "%s\n" $(SRC_DEPS)
