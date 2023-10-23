@@ -107,5 +107,5 @@ clean:
 # all .d files are missing and we don't want those errors to pop up
 # ---------------------------------------------------------------------------- #
 -include $(SRC_DEPS)
--include $(COMDEPS)
+-include $(COM_DEPS)
 -include $(TESTS_DEPS)
