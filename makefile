@@ -5,6 +5,7 @@ CPPFLAGS =#                 Flags for the C preprocessor
 CXX      = g++#             Program for compiling C++ programs; default g++
 CC       = gcc#             Program for compiling C programs; default cc
 CXXFLAGS = -Wall\
+		   -std=c++17\
            -march=native\
 		   -fno-diagnostics-show-caret\
 		   -fdiagnostics-color=always\
@@ -14,6 +15,7 @@ LDFLAGS  =#				    Flags for compilers when they invoke the linker
 BUILD_DIR = build#                           Build directory
 SRC_DIR   = src#                             Source files directory
 COM_DIR   = com#                             Common files directory
+VPATH     = $(SRC_DIR):$(COM_DIR):$(TESTS_DIR)
 TESTS_DIR = tests#                           Test files directory
 SRC_CPP   = $(wildcard $(SRC_DIR)/*.cpp)#    Match all .cpp files in ./src/
 COM_CPP   = $(wildcard $(COM_DIR)/*.cpp)#    Match all .cpp files in ./com/
@@ -50,17 +52,17 @@ unit_tests: $(TEST_EXEC)
 
 # ------------------------------ Program Linkage ----------------------------- #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
-	$(CXX) $(CXXFLAGS) $(SRC_OBJS) $(COM_OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
-	$(CXX) $(CXXFLAGS) $(TESTS_OBJS) $(COM_OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # ---------------------------- Compile Source Code --------------------------- #
 # Compile .cpp files into .obj files and create .d files to trigger
 # recompilation if headers change
 # ---------------------------------------------------------------------------- #
-$(BUILD_DIR)/%.o: */%.cpp
+$(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
