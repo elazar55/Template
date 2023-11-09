@@ -5,12 +5,13 @@ CPPFLAGS =#                 Flags for the C preprocessor
 CXX      = g++#             Program for compiling C++ programs; default g++
 CC       = gcc#             Program for compiling C programs; default cc
 CXXFLAGS = -Wall\
-		   -std=c++17\
+           -std=c++17\
            -march=native\
-		   -fno-diagnostics-show-caret\
-		   -fdiagnostics-color=always\
-           -g#              Flags for the C++ compiler
-LDFLAGS  =#				    Flags for compilers when they invoke the linker
+           -fno-diagnostics-show-caret\
+           -fdiagnostics-color=always\
+           -I com/\
+           -g#                               Flags for the C++ compiler
+LDFLAGS  =#                                  Flags for compilers when they invoke the linker
 
 BUILD_DIR = build#                           Build directory
 SRC_DIR   = src#                             Source files directory
