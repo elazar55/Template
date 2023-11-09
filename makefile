@@ -34,6 +34,15 @@ ifeq ($(OS),Windows_NT)
 	EXT = .exe
 endif
 
+# Colors
+COLOR_OFF = \033[0m
+RED		  = \033[0;31m
+GREEN	  = \033[0;32m
+YELLOW	  = \033[0;33m
+BLUE	  = \033[0;34m
+PURPLE	  = \033[0;35m
+CYAN	  = \033[0;36m
+
 # Executable names
 EXEC_BASE = ProjectName
 EXEC      = $(BUILD_DIR)/$(EXEC_BASE)$(EXT)
@@ -41,22 +50,25 @@ TEST_EXEC = $(BUILD_DIR)/$(EXEC_BASE)_Tests$(EXT)
 # ============================================================================ #
 #                                 Build Targets                                #
 # ============================================================================ #
-.PHONY: all
-all: unit_tests prog
+.PHONY: all Prologue Program UnitTests
+all: Prologue UnitTests Program
 
-.PHONY: prog
-prog: $(EXEC)
+Program: $(EXEC)
 
-.PHONY: unit_tests
-unit_tests: $(TEST_EXEC)
+UnitTests: $(TEST_EXEC)
+
+Prologue:
+	@printf "$(RED)CXXFLAGS: $(CXXFLAGS)\nLDFLAGS: $(LDFLAGS)\n"
 
 # ------------------------------ Program Linkage ----------------------------- #
 $(EXEC): $(SRC_OBJS) $(COM_OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	@printf "$(GREEN)Linking $(@F): $(^F)\n"
 
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	@printf "$(GREEN)Linking $(@F): $(^F)\n"
 
 # ---------------------------- Compile Source Code --------------------------- #
 # Compile .cpp files into .obj files and create .d files to trigger
@@ -64,7 +76,8 @@ $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
 # ---------------------------------------------------------------------------- #
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
+	@printf "$(YELLOW)Compiling $(<F)\n"
 
 # ----------------------------------- Debug ---------------------------------- #
 .PHONY: debug
