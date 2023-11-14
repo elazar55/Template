@@ -12,7 +12,7 @@ CXXFLAGS = -g\
            -march=native\
            -fdiagnostics-color=always\
            -fno-diagnostics-show-caret\
-           -I com/
+           -Icom
 
 # Flags for the linker
 LDFLAGS  =
@@ -49,37 +49,34 @@ PURPLE	  = \033[0;35m
 CYAN	  = \033[0;36m
 
 # Executable names
-EXEC_BASE = ProjectName
+EXEC_BASE = App
 EXEC      = $(BUILD_DIR)/$(EXEC_BASE)$(EXT)
 TEST_EXEC = $(BUILD_DIR)/$(EXEC_BASE)Tests$(EXT)
 
 # ============================================================================ #
 #                                 Build Targets                                #
 # ============================================================================ #
-.PHONY: all prologue program unitTests debug clean
+.PHONY: all prologue unitTests program debug clean
 all: prologue unitTests program
-
-program: $(EXEC)
 
 unitTests: $(TEST_EXEC)
 
+program: $(EXEC)
+
 prologue:
 	@clear
-	@printf "$(CYAN)CXXFLAGS: $(CXXFLAGS)\nLDFLAGS: $(LDFLAGS)\n"
-
-# ------------------------------ Program Linkage ----------------------------- #
-$(EXEC): $(SRC_OBJS) $(COM_OBJS)
-	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-	@printf "$(GREEN)Linking "
-	@printf "%s + " $(^F)
-	@printf "=> $(@F)\n"
+	@printf "$(CYAN)CXXFLAGS: $(CXXFLAGS)\n"
+	@printf "$(CYAN)LDFLAGS : $(LDFLAGS)\n"
 
 # ----------------------------- Unit Test Linkage ---------------------------- #
 $(TEST_EXEC): $(TESTS_OBJS) $(COM_OBJS)
 	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-	@printf "$(GREEN)Linking "
-	@printf "%s + " $(^F)
-	@printf "=> $(@F)\n"
+	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
+
+# ------------------------------ Program Linkage ----------------------------- #
+$(EXEC): $(SRC_OBJS) $(COM_OBJS)
+	@$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	@printf "$(GREEN)Linking $(^F) => $(@F)\n"
 
 # ---------------------------- Compile Source Code --------------------------- #
 # Compile .cpp files into .obj files and create .d files to trigger
@@ -93,17 +90,17 @@ $(BUILD_DIR)/%.o: %.cpp
 # ----------------------------------- Debug ---------------------------------- #
 debug:
 	@printf "$(BLUE)"
-	@printf "OS: $(OS)\n"
-	@printf "EXE: $(EXEC)\n"
-	@printf "CXXFLAGS: $(CXXFLAGS)\n"
-	@printf "LDFLAGS: $(LDFLAGS)\n"
-	@printf "SRC_CPP: $(SRC_CPP)\n"
-	@printf "COM_CPP: $(COM_CPP)\n"
-	@printf "TESTS_CPP: $(TESTS_CPP)\n"
-	@printf "SRC_OBJS: $(SRC_OBJS)\n"
-	@printf "COM_OBJS: $(COM_OBJS)\n"
-	@printf "TESTS_OBJS: $(TESTS_OBJS)\n"
-	@printf "SRC_DEPS: $(SRC_DEPS)\n"
+	@printf "%-10s: $(OS)\n" OS
+	@printf "%-10s: $(EXEC)\n" EXE
+	@printf "%-10s: $(CXXFLAGS)\n" CXXFLAGS
+	@printf "%-10s: $(LDFLAGS)\n" LDFLAGS
+	@printf "%-10s: $(SRC_CPP)\n" SRC_CPP
+	@printf "%-10s: $(COM_CPP)\n" COM_CPP
+	@printf "%-10s: $(TESTS_CPP)\n" TESTS_CPP
+	@printf "%-10s: $(SRC_OBJS)\n" SRC_OBJS
+	@printf "%-10s: $(COM_OBJS)\n" COM_OBJS
+	@printf "%-10s: $(TESTS_OBJS)\n" TESTS_OBJS
+	@printf "%-10s: $(SRC_DEPS)\n" SRC_DEPS
 
 # ---------------------------------- Utility --------------------------------- #
 clean:
